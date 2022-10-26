@@ -1,0 +1,17 @@
+{
+    "name": "parakhatdin/5rooms",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Parakhatdin",
+            "email": "nuratdinov.p@gmail.com"
+        }
+    ],
+    "require": {}
+}
