@@ -9,34 +9,17 @@ class RoomRepository extends BaseRepository implements RoomRepositoryInterface
 {
     protected $tableName = "rooms";
 
-    public function find(int $id): ?RoomDTO
-    {
-        $result = parent::find($id);
-        if (count($result) > 0) {
-            return $this->transferToDTO($result[0]);
-        }
-        return null;
-    }
-
-    public function getAll(): ?array
-    {
-        $result = parent::all();
-        if (count($result) > 0) {
-            $toDTO = [];
-            foreach ($result as $item) {
-                $toDTO[] = $this->transferToDTO($item);
-            }
-            return $toDTO;
-        }
-        return null;
-    }
-
     public function store(RoomDTO $dto)
     {
         parent::insert(["number" => $dto->getNumber()]);
     }
 
-    private function transferToDTO(array $data): RoomDTO
+    public function findByRoomNumber(int $room_number): ?RoomDTO
+    {
+        return parent::where("number", "=", $room_number)->first();
+    }
+
+    protected function transferToDTO(array $data): RoomDTO
     {
         $result = new RoomDTO();
         if (array_key_exists("id", $data)) {

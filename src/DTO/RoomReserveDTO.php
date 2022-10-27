@@ -2,11 +2,13 @@
 
 namespace App\DTO;
 
-class RoomReserveDTO
+use DateTime;
+
+class RoomReserveDTO extends BaseDTO
 {
     private ?int $id = null;
-    private ?string $beginDate = null;
-    private ?string $endDate = null;
+    private ?DateTime $beginDate = null;
+    private ?DateTime $endDate = null;
     private ?string $ownerEmail = null;
     private ?RoomDTO $room = null;
 
@@ -27,33 +29,33 @@ class RoomReserveDTO
     }
 
     /**
-     * @return string|null
+     * @return DateTime|null
      */
-    public function getBeginDate(): ?string
+    public function getBeginDate(): ?DateTime
     {
         return $this->beginDate;
     }
 
     /**
-     * @param string|null $beginDate
+     * @param DateTime|null $beginDate
      */
-    public function setBeginDate(?string $beginDate): void
+    public function setBeginDate(?DateTime $beginDate): void
     {
         $this->beginDate = $beginDate;
     }
 
     /**
-     * @return string|null
+     * @return DateTime|null
      */
-    public function getEndDate(): ?string
+    public function getEndDate(): ?DateTime
     {
         return $this->endDate;
     }
 
     /**
-     * @param string|null $endDate
+     * @param DateTime|null $endDate
      */
-    public function setEndDate(?string $endDate): void
+    public function setEndDate(?DateTime $endDate): void
     {
         $this->endDate = $endDate;
     }
@@ -97,8 +99,8 @@ class RoomReserveDTO
     {
         return [
             "id" => $this->getId(),
-            "begin_date" => $this->getBeginDate(),
-            "end_date" => $this->getEndDate(),
+            "begin_date" => $this->getBeginDate()->format("Y-m-d H:i:s"),
+            "end_date" => $this->getEndDate()->format("Y-m-d H:i:s"),
             "owner_email" => $this->getOwnerEmail(),
             "room" => $this->getRoom()?->toArray()
         ];

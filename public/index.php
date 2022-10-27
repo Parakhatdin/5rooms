@@ -5,8 +5,10 @@ require __DIR__.'/../vendor/autoload.php';
 use App\Service\RoomService;
 
 $roomService = new RoomService();
-$d = new \App\DTO\RoomDTO();
-$d->setNumber("5");
-$roomService->store($d);
-//$roomService->store($d);
-//var_dump($roomService->getById(2)?->toArray());
+$result = $roomService->checkAndReserve(1, new DateTime("now"), new DateTime("2022-10-27 20:00"), "nuratdinov.p@gmail.com");
+if ($result) {
+    echo "reserved!";
+} else {
+    $reservingInDate = $roomService->getReservingInDate(1, new DateTime("now"));
+    print_r($reservingInDate->toArray());
+}

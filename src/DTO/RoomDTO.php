@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-class RoomDTO
+class RoomDTO extends BaseDTO
 {
     private ?int $id = null;
     private ?int $number = null;
