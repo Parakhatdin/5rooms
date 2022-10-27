@@ -17,9 +17,9 @@ class RoomService
         $this->roomRepository = new RoomRepository();
         $this->roomReserveRepository = new RoomReserveRepository();
     }
-    public function store(RoomDTO $DTO)
+    public function getAll()
     {
-        $this->roomRepository->store($DTO);
+        return $this->roomRepository->get(5, 0, "number", true);
     }
 
     public function checkAndReserve(int $room_number, DateTime $begin_date, DateTime $end_date, string $user_email): bool

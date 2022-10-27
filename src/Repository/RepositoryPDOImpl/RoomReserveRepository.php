@@ -44,6 +44,7 @@ class RoomReserveRepository extends BaseRepository implements RoomReserveReposit
 
     protected function transferToDTO(array $data): RoomReserveDTO
     {
+        $roomRepository = new RoomRepository();
         $result = new RoomReserveDTO();
         if (array_key_exists("id", $data)) {
             $result->setId($data["id"]);
@@ -57,9 +58,9 @@ class RoomReserveRepository extends BaseRepository implements RoomReserveReposit
         if (array_key_exists("owner_email", $data)) {
             $result->setOwnerEmail($data["owner_email"]);
         }
-//        if (array_key_exists("room_id", $data)) {
-//            $result->setRoom($this->roomRepository->find($data["room_id"]));
-//        }
+        if (array_key_exists("room_id", $data)) {
+            $result->setRoom($roomRepository->find($data["room_id"]));
+        }
         return $result;
     }
 
