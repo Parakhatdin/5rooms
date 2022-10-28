@@ -7,16 +7,13 @@ use App\Repository\RoomRepository as RoomRepositoryInterface;
 
 class RoomRepository extends BaseRepository implements RoomRepositoryInterface
 {
-    protected $tableName = "rooms";
-
-    public function store(RoomDTO $dto)
-    {
-        parent::insert(["number" => $dto->getNumber()]);
-    }
+    protected ?string $tableName = "rooms";
 
     public function findByRoomNumber(int $room_number): ?RoomDTO
     {
-        return parent::where("number", "=", $room_number)->first();
+        /** @var RoomDTO $result */
+        $result = $this->where("number", "=", $room_number)->first();
+        return $result;
     }
 
     protected function transferToDTO(array $data): RoomDTO

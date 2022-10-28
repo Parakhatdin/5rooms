@@ -13,5 +13,7 @@
             "email": "nuratdinov.p@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+      "ext-pdo": "*"
+    }
 }

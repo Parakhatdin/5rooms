@@ -2,39 +2,19 @@
 
 namespace App\Repository\RepositoryPDOImpl;
 
+use App\DTO\RoomDTO;
 use App\DTO\RoomReserveDTO;
 use App\Repository\RoomReserveRepository as RoomReserveRepositoryInterface;
 use DateTime;
+use Exception;
 
 class RoomReserveRepository extends BaseRepository implements RoomReserveRepositoryInterface
 {
-    protected $tableName = "room_reserves";
-
-    public function find(int $id): ?RoomReserveDTO
-    {
-        $result = parent::find($id);
-        if (count($result) > 0) {
-            return $this->transferToDTO($result[0]);
-        }
-        return null;
-    }
-
-    public function getAll(): ?array
-    {
-        $result = parent::all();
-        if (count($result) > 0) {
-            $toDTO = [];
-            foreach ($result as $item) {
-                $toDTO[] = $this->transferToDTO($item);
-            }
-            return $toDTO;
-        }
-        return null;
-    }
+    protected ?string $tableName = "room_reserves";
 
     public function store(RoomReserveDTO $dto)
     {
-        parent::insert([
+        $this->insert([
             "room_id" => $dto->getRoom()->getId(),
             "begin_date" => $dto->getBeginDate()->format("Y-m-d H:i:s"),
             "end_date" => $dto->getEndDate()->format("Y-m-d H:i:s"),
@@ -42,6 +22,29 @@ class RoomReserveRepository extends BaseRepository implements RoomReserveReposit
         ]);
     }
 
+    public function getLastReserve($room_id): ?RoomReserveDTO
+    {
+        /** @var RoomReserveDTO $result */
+        $result = $this->where("room_id", "=", $room_id)->first("begin_date", false);
+        return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getBetweenDate(int $room_id, DateTime $begin_date): ?RoomReserveDTO
+    {
+        /** @var RoomReserveDTO $result */
+        $result = $this->where("room_id", "=", $room_id)
+            ->andWhere("begin_date", "<", $begin_date->format("Y-m-d H:i:s"))
+            ->andWhere("end_date", ">", $begin_date->format("Y-m-d H:i:s"))
+            ->first();
+        return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function transferToDTO(array $data): RoomReserveDTO
     {
         $roomRepository = new RoomRepository();
@@ -59,13 +62,10 @@ class RoomReserveRepository extends BaseRepository implements RoomReserveReposit
             $result->setOwnerEmail($data["owner_email"]);
         }
         if (array_key_exists("room_id", $data)) {
-            $result->setRoom($roomRepository->find($data["room_id"]));
+            /** @var RoomDTO $roomDTO */
+            $roomDTO = $roomRepository->find($data["room_id"]);
+            $result->setRoom($roomDTO);
         }
         return $result;
-    }
-
-    public function getLastReserve($room_id): ?RoomReserveDTO
-    {
-        return parent::where("room_id", "=", $room_id)->first("begin_date", false);
     }
 }

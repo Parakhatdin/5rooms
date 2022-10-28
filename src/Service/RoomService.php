@@ -24,7 +24,7 @@ class RoomService
 
     public function checkAndReserve(int $room_number, DateTime $begin_date, DateTime $end_date, string $user_email): bool
     {
-        $reservingInDate = $this->getReservingInDate($room_number, $begin_date);
+        $reservingInDate = $this->getReservingInDate($room_number, $begin_date, $end_date);
         if ($reservingInDate) {
             return false;
         }
@@ -32,20 +32,21 @@ class RoomService
         return true;
     }
 
-    public function getReservingInDate(int $room_number, DateTime $date)
+    public function getReservingInDate(int $room_number, DateTime $begin_date, DateTime $end_date)
     {
         $room = $this->roomRepository->findByRoomNumber($room_number);
         if (!$room) {
             throw new \RuntimeException("room with number: $room_number not found");
         }
-        $lastReserve = $this->roomReserveRepository->getLastReserve($room->getId());
-        if (!$lastReserve) {
+        $beginDateReserver = $this->roomReserveRepository->getBetweenDate($room->getId(), $begin_date);
+        $endDateReserver = $this->roomReserveRepository->getBetweenDate($room->getId(), $end_date);
+        if (!$beginDateReserver && !$endDateReserver) {
             return null;
         }
-        if ($lastReserve->getEndDate() < $date) {
-            return null;
+        if ($beginDateReserver) {
+            return $beginDateReserver;
         }
-        return $lastReserve;
+        return $endDateReserver;
     }
 
     private function reserve(int $room_number, DateTime $begin_date, DateTime $end_date, string $email)

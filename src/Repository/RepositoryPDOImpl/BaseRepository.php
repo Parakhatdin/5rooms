@@ -5,12 +5,14 @@ namespace App\Repository\RepositoryPDOImpl;
 use App\DTO\BaseDTO;
 use App\Repository\Repository;
 use App\System\DBConnector;
+use Exception;
+use PDO;
 use PDOException;
 
 abstract class BaseRepository implements Repository
 {
-    protected $tableName = null;
-    protected $connection = null;
+    protected ?string $tableName = null;
+    protected ?PDO $connection = null;
 
     private string $statement = "";
 
@@ -41,8 +43,17 @@ abstract class BaseRepository implements Repository
         if ($this->statement) {
             $statement = $this->statement;
         }
-        $statement = $statement . " WHERE $column $operation $value";
+        $statement = $statement . " WHERE $column $operation '$value'";
         $this->statement = $statement;
+        return $this;
+    }
+
+    public function andWhere($column, $operation, $value)
+    {
+        if (!$this->statement) {
+            throw new Exception("first use WHERE clause");
+        }
+        $this->statement = $this->statement . " AND $column $operation '$value'";
         return $this;
     }
 
