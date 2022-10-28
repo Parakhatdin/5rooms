@@ -60,20 +60,9 @@ abstract class BaseRepository implements Repository
     public function first(string $order_by_column = null, bool $order_asc=true): ?BaseDTO
     {
         try {
-            $statement = "SELECT * FROM $this->tableName";
-            if ($this->statement) {
-                $statement = $this->statement;
-                $this->statement = "";
-            }
-            if ($order_by_column) {
-                $order_asc = $order_asc?"ASC":"DESC";
-                $statement = $statement . " ORDER BY $order_by_column $order_asc";
-            }
-            $statement = $statement . " LIMIT 0, 1";
-            $statement = $this->connection->query($statement);
-            $result = $statement->fetchAll();
-            if (count($result) > 0) {
-                return $this->transferToDTO($result[0]);
+            $result = $this->get(1, 0, $order_by_column, $order_asc);
+            if (count($result?:[]) > 0) {
+                return $result[0];
             }
             return null;
         } catch (PDOException $exception) {
